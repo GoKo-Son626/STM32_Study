@@ -6,4 +6,6 @@
 
 **MDK**
 
-MDK安装 = 
+MDK安装 = MDK软件安装 + 器件支持包
+- MDK软件[下载](https://www.keil.com/download/product/)
+- 器件支持包[下载](https://www.keil.com/dd2/pack/)
