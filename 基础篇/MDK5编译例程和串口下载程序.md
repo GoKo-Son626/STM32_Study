@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-05-28
- * @LastEditors: 不与
- * @LastEditTime: 2024-05-29
+ * @LastEditors: GoKo-Son626
+ * @LastEditTime: 2024-05-31
  * @FilePath: \STM32_Study\基础篇\MDK5编译例程和串口下载程序.md
 -->
 ### MDK5编译例程
@@ -44,6 +44,7 @@
 - 勾选”编程后运行“ ”效验“ ”编程前执行全片擦除“
 - 选择”DTR低电平复位，RTS高电平进BootLoader“
 - 开始编程
+
 > 战舰有一键下载电路，不需要按复位
 
 STM32启动模式：

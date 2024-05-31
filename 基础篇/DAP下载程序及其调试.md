@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-05-29
- * @LastEditors: 不与
- * @LastEditTime: 2024-05-30
+ * @LastEditors: GoKo-Son626
+ * @LastEditTime: 2024-05-31
  * @FilePath: \STM32_Study\基础篇\DAP下载程序及其调试.md
  * @Description: 
 -->
@@ -36,5 +36,5 @@ DAP 仿真调试程序：
 3. Memory 窗口：内存查看窗口
 4. Peripheral 窗口：查看寄存器值
 
-> 仿真时level 0等级优化
+> 仿真时需要level 0等级优化
 
