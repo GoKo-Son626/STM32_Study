@@ -23,9 +23,9 @@ HSE（4~16MHz）和HSI（8MHz）通过锁相环（PLL）得到72MHz（max）的S
 1. 系统时钟配置步骤
 >
 > 1. 配置HSE_VALUE(外部晶振频率)
-> 2. 调用SystemInit()函数（可选）
+> 2. 调用SystemInit()函数（可选）(BECAUSE 只配置了中断向量表的位置，无意义)
 > 3. 选择时钟源，配置PLL（通过HAL_RCC_OscConfig()函数设置）
-> 4. 选择系统时钟源，配置总线分配器（通过HAL_RCC_ClockConfig()函数设置）
+> 4. 选择系统时钟源（PLL），配置总线分配器（通过HAL_RCC_ClockConfig()函数设置）
 
 2. 外设时钟使能和失能
 
@@ -33,8 +33,11 @@ HSE（4~16MHz）和HSI（8MHz）通过锁相环（PLL）得到72MHz（max）的S
 > 禁止时失能
 
 3. sys_stm32_clock_init函数（F1）
-   1. HAL_RCC_OscConfig()函数 
-   > 38->8:40
-   2. HAL_RCC_ClockConfig()函数
-   > 
+>
+>   1. HAL_RCC_OscConfig()函数 
+>   > 38->8:40
+>   2. HAL_RCC_ClockConfig()函数
+>   > 38->15：16
+
+
 ##### 总结
