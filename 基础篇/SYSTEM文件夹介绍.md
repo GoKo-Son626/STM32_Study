@@ -70,4 +70,29 @@
 
 3. printf函数支持
 
+> **半主机模式**
+> 用于ARM目标的一种机制，可将来自应用程序代码的输入/输出请求传送至运行调试器的主机
+> 简单来说就是通过仿真器实现开发板在电脑上的输入和输出 
+
+> 1. 避免使用半主机模式（ 一般不适用半主机模式，所以避免）
 > 
+>       1. 微库法(简单，好)
+>       魔术棒->Target->勾选：Use Micro LIB
+>       2. 代码法（复杂，慢）
+>       一个预处理,两个定义，三个
+>               1. #pragmaimport(__use_no_semihosting)，确保不从C库中使用半主机函数
+>               2. 定义:__FILE结构体,避免HAL库某些情况下报错
+>               3. 定义:FILE__stdout,避免编译报错
+>               4. 实现:_ttywrch、_sys_exit和 _sys_command_string等三个函数
+
+> 2. 实现fputc函数（实现单个字符输出）
+> ```
+> /* MDK下需要重定义fputc函数, printf函数最终会通过调用fputc输出字符串到串口 */
+> int fputc(int ch, FILE *f)
+> {
+>     while ((USART_UX->SR & 0X40) == 0);     /* 等待上一个字符发送完成, 不然会一直发送叠加导致乱码 */
+> 
+>     USART_UX->DR = (uint8_t)ch;             /* 将要发送的字符 ch 写入到DR寄存器 */
+>     return ch;
+> }
+> ```
