@@ -2,7 +2,7 @@
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
  * @LastEditTime: 2024-06-08
- * @FilePath: \STM32_Study\基础篇\GPIO.md
+ * @FilePath: \STM32_Study\入门篇\GPIO\GPIO.md
  * @Description: 
 -->
 # GPIO
@@ -93,7 +93,7 @@
 | 输入浮空       | 输入用，完全浮空，状态不定              |
 | 输入上拉       | 输入用，用内部上拉，默认是高电平        |
 | 输入下拉       | 输入用，用内部下拉，默认是低电平        |
-| 模拟功能       | ADC、DAC                                |
+| 模拟功能       | ADC，DAC                                |
 | 开漏输出       | 软件IIC的SDA、SCL等                     |
 | 推挽输出       | 驱动能力强，25mA(max)，通用输出         |
 | 开漏式复用功能 | 片上外设功能(硬件IIC的SDL、SCL引脚等)   |
@@ -126,17 +126,17 @@
         较1.变化：P-MOS始终不导通，往ODR对应位写0，N-MOS管导通，写1则N-MOS不导通
         特点:不能输出高电平必须有外部(或内部，对于F4-H7)上拉才能输出高电平
 
-6. 开漏式复用功能
+6. 推挽输出
+
+        较1.变化：往ODR对应位写0，N-MOS管导通，写1则P-MOS不导通
+        特点:可以输出高低电平，驱动能力强
+
+7. 开漏式复用功能
 
         同5.：
         特点:
            1. 不能输出高电平必须有外部(或内部，对于F4-H7)上拉才能输出高电平
            2. 由其它外设控制输出
-
-7. 推挽输出
-
-        较1.变化：往ODR对应位写0，N-MOS管导通，写1则P-MOS不导通
-        特点:可以输出高低电平，驱动能力强
 
 8. 推挽式复用功能
 
@@ -191,7 +191,7 @@
 相关HAL库函数介绍：
 ![GPIO相关HAL库函数](Pictures/GPIO相关HAL库函数.png)
 
-1. 使能时钟 _HAL_RCC_GPIOx_CLK_ENABLE()
+1. 使能时钟 __HAL_RCC_GPIOx_CLK_ENABLE()
         ```
         SET BIT(RCC-APB2ENR ,1 << 2)
         ```
@@ -202,10 +202,38 @@
 3. 设置输出状态（可选）：
         HAL_GPIO_WritePin()
         HAL_GPIO_TogglePin()
-4. ，读取输入状态(可选)：HAL_GPIO_ReadPin()
+4. 读取输入状态(可选)：HAL_GPIO_ReadPin()
 #### 编程实战：点亮一个LED灯
 
-
+**led.c代码**
+```c
+        void led_init(void)
+{
+    GPIO_InitTypeDef gpio_init_struct;
+    
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    
+    gpio_init_struct.Pin = GPIO_PIN_5;
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP;
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_LOW;
+    
+    HAL_GPIO_Init(GPIOB, &gpio_init_struct);
+    
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+}
+```
 
 #### 编程实战：通过一个按键控制一个LED灯
 
+**战舰LED连接原理图**
+![战舰LED连接原理图](Pictures/战舰LED连接原理图.png)
+(3.3V GCC - 1.83V 压降) / 510R = 2.88mA
+> 0805贴片发光二极管：绿侧为负极
+> IO模式：输入为采集，输出为控制
+> 输出模式时禁止使用上下拉
+> 高阻态可以为1，但是当另一端接地时相当于电路断开了，所以不能用
+> 
+
+1. 点亮一个灯
+     - 因为新建一个LED的驱动，所以先建立一个板级工程文件（Drivers->BSP）
+     - 放入led.c和led.h文件
