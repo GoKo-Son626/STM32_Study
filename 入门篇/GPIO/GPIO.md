@@ -220,7 +220,7 @@
 
 **led.c代码**
 ```c
-        void led_init(void)
+void led_init(void)
 {
     GPIO_InitTypeDef gpio_init_struct;
     
@@ -237,3 +237,43 @@
 ```
 
 #### 编程实战：通过一个按键控制一个LED灯
+
+**独立按键抖动波形图**
+![独立按键抖动波形图](Pictures/独立按键抖动波形图.png)
+> 软件消抖:通过延时跳过抖动的时间段，再判断I0输入电平。
+**KEY连接原理图**
+![KEY连接原理图](Pictures/KEY连接原理图.png)
+> PA0:输入下拉
+> PE4/3/2:输入上拉
+
+**led.h代码**
+```c
+void key_init(void)
+{
+    GPIO_InitTypeDef gpio_init_struct;
+    
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+    
+    gpio_init_struct.Pin = GPIO_PIN_2;
+    gpio_init_struct.Mode = GPIO_MODE_INPUT;
+    gpio_init_struct.Pull = GPIO_PULLUP;
+    
+    HAL_GPIO_Init(GPIOE, &gpio_init_struct);
+    
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_SET);
+}
+
+uint8_t key_scan(void)
+{
+    if(HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2) == 0)
+    {
+        delay_ms(10);
+        while(1)
+        {
+            while(HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2) == 0);
+            return 1;
+        }
+    }
+    return 0;
+}
+```
