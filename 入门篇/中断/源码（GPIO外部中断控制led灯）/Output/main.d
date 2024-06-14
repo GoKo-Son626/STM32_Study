@@ -62,3 +62,4 @@
 ..\..\output\main.o: ..\..\Drivers\./SYSTEM/usart/usart.h
 ..\..\output\main.o: D:\MDK5.34\ARM\ARMCC\Bin\..\include\stdio.h
 ..\..\output\main.o: ..\..\Drivers\./BSP/LED/led.h
+..\..\output\main.o: ..\..\Drivers\./BSP/EXTI/exti.h
