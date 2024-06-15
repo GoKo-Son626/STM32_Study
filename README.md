@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-05-26
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-14
+ * @LastEditTime: 2024-06-15
  * @FilePath: \STM32_Study\README.md
  * @Description: 
 -->
@@ -14,7 +14,7 @@
 
 #### 学习环境
 
-- [环境搭建](基础篇/软件安装.md)
+- [环境搭建](基础篇/2.软件安装.md)
 
 #### ST官方学习资料
 
