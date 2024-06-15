@@ -1,9 +1,9 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-14
+ * @LastEditTime: 2024-06-15
  * @FilePath: \STM32_Study\Markdown模板.md
- * @Description: 该模板为所有笔记的模板
+ * @Description: 该模板为所有笔记模板
 -->
 
 # 文件内容标题
@@ -30,5 +30,5 @@
 ">" 标题简介或重点内容简介
 
 > 标题（#）上下换行
-> **加粗**上换行
+> **加粗**上换行(照片下不换)
 > ">"上下换行

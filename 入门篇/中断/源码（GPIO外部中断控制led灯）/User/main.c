@@ -35,10 +35,9 @@ int main(void)
     
     while(1)
     {
-
         LED1(1);                                /* LED1 Ãð */
         delay_ms(500);
-        LED0(1);                                /* LED0 Ãð */
+        LED1(0);                                /* LED1 ÁÁ */
         delay_ms(500);
     }
 }
