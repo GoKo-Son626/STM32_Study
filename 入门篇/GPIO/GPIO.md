@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-15
+ * @LastEditTime: 2024-06-16
  * @FilePath: \STM32_Study\入门篇\GPIO\GPIO.md
  * @Description: 
 -->
@@ -260,7 +260,7 @@ void led_init(void)
 > PA0:输入下拉
 > PE4/3/2:输入上拉
 
-**led.h代码**
+**key.c代码**
 ```c
 void key_init(void)
 {

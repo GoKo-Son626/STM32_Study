@@ -28,4 +28,6 @@ del *.map /s
 del *.dbgconf /s
 del *.LINGZHUNING /s
 del *.Administrator /s
+
+del *.hex /s
 exit
