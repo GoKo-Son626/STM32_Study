@@ -3,7 +3,7 @@
  * @LastEditors: GoKo-Son626
  * @LastEditTime: 2024-06-18
  * @FilePath: \STM32_Study\入门篇\6.Timer\Timer.md
- * @Description: 该模板为所有笔记模板
+ * @Description: 定时器学习的笔记和代码实践
 -->
 
 # 文件内容标题
