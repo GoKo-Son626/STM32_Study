@@ -1,8 +1,8 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-16
- * @FilePath: \STM32_Study\入门篇\GPIO\GPIO.md
+ * @LastEditTime: 2024-06-22
+ * @FilePath: \STM32_Study\入门篇\1.GPIO\GPIO.md
  * @Description: 
 -->
 
@@ -32,7 +32,7 @@
 - 不同类型IO口数量可能不一样
 - 快速翻转（翻转高电平到低或低到高）
   
-        若芯片的时钟频率为72Mhz，且每次翻转最需要两个时钟周期，那么IO口最大翻转频率：
+        若芯片的时钟频率为72Mhz，且每次翻转最少需要两个时钟周期，那么IO口最大翻转频率：
 
         一个周期为1/72Mhz
         单次翻转时间：2 * 1/72Mhz
