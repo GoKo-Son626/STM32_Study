@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-25
+ * @LastEditTime: 2024-06-26
  * @FilePath: \STM32_Study\入门篇\1.GPIO\GPIO.md
  * @Description: 
 -->
@@ -157,7 +157,7 @@
                 2、由其他外设控制输出
 > STM32能输出5V的电平吗？
 >       开漏式外接外部上拉才可以
-> 
+
 #### 5. GPIO寄存器介绍
 
 **(F1系列)GPIO通用寄存器GPIOX_yyy**
