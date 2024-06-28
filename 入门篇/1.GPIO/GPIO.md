@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-26
+ * @LastEditTime: 2024-06-28
  * @FilePath: \STM32_Study\入门篇\1.GPIO\GPIO.md
  * @Description: 
 -->
@@ -156,6 +156,7 @@
                 1、可输出高低电平，驱动能力强
                 2、由其他外设控制输出
 > STM32能输出5V的电平吗？
+> 
 >       开漏式外接外部上拉才可以
 
 #### 5. GPIO寄存器介绍
