@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-28
+ * @LastEditTime: 2024-06-30
  * @FilePath: \STM32_Study\入门篇\1.GPIO\GPIO.md
  * @Description: 
 -->
@@ -237,7 +237,7 @@
 void led_init(void)
 {
     GPIO_InitTypeDef gpio_init_struct;
-    
+    //初始化GPIO时钟
     __HAL_RCC_GPIOB_CLK_ENABLE();
     
     gpio_init_struct.Pin = GPIO_PIN_5;
