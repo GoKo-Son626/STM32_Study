@@ -34,10 +34,10 @@ int main(void)
     { 
         HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_SET);    /* PB5÷√1 */ 
 //        HAL_GPIO_WritePin(GPIOE,GPIO_PIN_5,GPIO_PIN_RESET);  /* PE5÷√0 */ 
-        delay_ms(200);
+        delay_ms(1000);
         HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_RESET);  /* PB5÷√0 */
 //        HAL_GPIO_WritePin(GPIOE,GPIO_PIN_5,GPIO_PIN_SET);    /* PE5÷√1 */
-        delay_ms(200); 
+        delay_ms(1000); 
     }
 }
 
