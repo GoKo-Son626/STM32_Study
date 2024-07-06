@@ -41,8 +41,7 @@ void led_init(void)
     gpio_init_struct.Pull = GPIO_PULLUP;                    /* 上拉 */
     gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;          /* 高速 */
     HAL_GPIO_Init(LED0_GPIO_PORT, &gpio_init_struct);       /* 初始化LED0引脚 */
-
-    gpio_init_struct.Pin = LED1_GPIO_PIN;                   /* LED1引脚 */
+    gpio_init_struct.Pin = LED1_GPIO_PIN;                   /* Pin设置为LED1引脚 */
     HAL_GPIO_Init(LED1_GPIO_PORT, &gpio_init_struct);       /* 初始化LED1引脚 */
     
 
