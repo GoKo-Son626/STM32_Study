@@ -23,6 +23,7 @@
 #include "./SYSTEM/delay/delay.h"
 #include "./BSP/LED/led.h"
 #include "./BSP/WDG/wdg.h"
+#include "./BSP/KEY/key.h"
 
 
 int main(void)
@@ -30,16 +31,39 @@ int main(void)
     HAL_Init();                             /* 初始化HAL库 */
     sys_stm32_clock_init(RCC_PLL_MUL9);     /* 设置时钟为72Mhz */
     delay_init(72);                         /* 延时初始化 */
+    key_init();                             // 初始化按键
     usart_init(115200);                     /* 串口初始化为115200 */
+    delay_ms(100);
     iwdg_init(IWDG_PRESCALER_32, 1250);     /* 预分频系数为32，重装载值为1250，溢出时间为1s */
+    led_init();                             // 初始化LED
     
     
-    printf("你好，你还没喂狗，请及时喂狗！！！\r\n");
+//      验证1
+//    printf("你好，你还没喂狗，请及时喂狗！！！\r\n");
+//    
+//    while (1)
+//    {
+//        delay_ms(1010);
+//        iwdg_feed();
+//        printf("已经喂狗\r\n");
+//    }
     
-    while (1)
+    
+//      验证2
+    LED0(0);
+    while(1)
     {
-        delay_ms(1010);
-        iwdg_feed();
-        printf("已经喂狗\r\n");
+        if (key_scan(1) == WKUP_PRES)       /* 如果WK_UP按下,则喂狗 */
+        {
+            LED1(0);                        /* 点亮LED1（蓝灯） */
+            iwdg_feed();                    /* 喂狗 */
+        }
+        delay_ms(10);
+        LED1(1);
     }
 }
+
+
+
+
+

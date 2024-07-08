@@ -498,6 +498,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Drivers\BSP\WDG\wdg.c</FilePath>
             </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Drivers\BSP\KEY\key.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
