@@ -158,10 +158,3 @@ void HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef *hwwdg)
 | 配置后不可修改。                     | 配置后可修改。             |
 | 适用于高可靠性和安全性要求高的系统。 | 适用于定期检查的应用场景。 |
 | -                                    | 具有窗口功能。             |
-
-
-
-
-
-
-
