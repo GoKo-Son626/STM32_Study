@@ -2,7 +2,7 @@
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
  * @LastEditTime: 2024-07-10
- * @FilePath: \STM32_Study\入门篇\6.Timer\Universal_timer.md
+ * @FilePath: \STM32_Study\入门篇\6.Timer\General_timer.md
  * @Description: 通用定时器的学习和记录
 -->
 
@@ -28,9 +28,13 @@
 
 ###### 1. 通用定时器框图
 
+<p style = "text-align:center;font-weight: bold"> 通用定时器框图 </p>
+
 ![通用定时器框图](Pictures/通用定时器框图.png)
 
 > **①时钟源**
+
+<p style = "text-align:center;font-weight: bold"> 计数器时钟源框图 </p>
 
 ![计数器时钟源框图](Pictures/计数器时钟源框图.png)
 
@@ -40,14 +44,15 @@
 ②**外部时钟模式1**：外部时钟源信号→IO→TIMx_CH1（或者 TIMx_CH2）,CH3 和 CH4 都是不可以的
 <p style = "text-align:center;font-weight: bold"> 外部时钟模式1框图 </p>
 
-![alt text](image.png)
+![外部时钟模式1框图](Pictures/外部时钟模式1框图.png)
+
 > TI1F_ED 表示来自于 CH1，并且没有经过边沿检测器过滤的信号，所以它是 CH1 的双边沿信号，即上升沿或者下降沿都是有效的。TI1FP1 表示来自 CH1 并经过边沿检测器后的信号，可以是上升沿或者下降沿。TI2FP2 表示来自 CH2 并经过边沿检测器后的信号，可以是上升沿或者下降沿。
 
 ③**外部时钟模式2**：外部
 时钟源信号→IO→TIMx_ETR。从 IO到 TIMx_ETR，就需要我们配置 IO 的复用功能，才能使IO 和定时器相连通。
 <p style = "text-align:center;font-weight: bold"> 外部时钟模式2框图 </p>
 
-![alt text](image-1.png)
+![外部时钟模式2框图](Pictures/外部时钟模式2框图.png)
 
 
 - 反相器：
@@ -61,7 +66,7 @@
 
 <p style = "text-align:center;font-weight: bold"> 内部触发输入框图 </p>
 
-![内部触发输入框图](image-2.png)
+![内部触发输入框图](Pictures/内部触发输入框图.png)
 - 详见开发手册
 
 
@@ -74,16 +79,34 @@
 | 内部触发输入(ITRx)                | 设置可参考《STM32F10xxx参考手册_V10（中文版）.pdf》14.3.15 小节 |
 
 > **②控制器**
-
-
+控制器包括：从模式控制器、编码器接口和触发控制器（TRGO）。
+- **从模式控制器**可以控制计数器复位、启动、递增/递减、计数。
+- **编码器接口**针对编码器计数。
+- **触发控制器**用来提供触发信号给别的外设，比如为其它定时器提供时钟或者为 DAC/ADC 的触发转换提供信号。
 
 > **③时基单元**
+和基本定时器**不同点**是：通用定时器的计数模式有三种：递增计数模式、递减计数模式和中心对齐模式；
+TIM2 和 TIM5 的计数器是 32 位的。
 
+<p style="text-align: center; font-weight: bold;">
+   更新时间发生条件
+</p>
+
+![更新时间发生条件](Pictures/更新时间发生条件.png)
+- 中心对齐模式下：计数器先从 0 开始递增计数，直到计数器的值等于自动重载寄存器影子寄存器的值减 1 时，定时器上溢，同时生成更新事件，然后从自动重载寄存器影子寄存器的值开始递减计算，直到计数值等于 1 时，定时器下溢，同时生成更新事件，然后又从 0 开始递增计数，依此循环。每次定时器上溢或下溢都会生成更新事件。
 
 > **④输入捕获**
-
-
 > **⑤捕获/比较(公共)**
-
-
 > **⑥输出比较**
+> - 详见开发指南
+
+
+###### 2. TIM2/TIM3/TIM4/TIM5 的几个与定时器中断相关且重要的寄存器
+
+- 控制寄存器 1（TIMx_CR1）
+- 从模式控制寄存器（TIMx_SMCR）
+- DMA/中断使能寄存（TIMx_DIER）
+- 状态寄存器（TIMx_SR）
+- 计数寄存器（TIMx_CNT）
+- 预分频寄存器（TIMx_PSC）
+- 自动重载寄存器（TIMx_ARR）
