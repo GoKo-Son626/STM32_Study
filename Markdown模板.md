@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-06-15
+ * @LastEditTime: 2024-07-10
  * @FilePath: \STM32_Study\Markdown模板.md
  * @Description: 该模板为所有笔记模板
 -->
@@ -32,3 +32,7 @@
 > 标题（#）上下换行
 > **加粗**上换行(照片下不换)
 > ">"上下换行
+
+<p style="text-align: center; font-weight: bold;">
+   这是一个居中并加粗的文本。
+</p>
