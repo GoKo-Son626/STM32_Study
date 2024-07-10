@@ -2,7 +2,7 @@
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
  * @LastEditTime: 2024-07-10
- * @FilePath: \STM32_Study\入门篇\6.Timer\Timer.md
+ * @FilePath: \STM32_Study\入门篇\6.Timer\Basic_timer.md
  * @Description: 定时器学习的笔记和代码实践
 -->
 
@@ -11,8 +11,7 @@
 > 内容目录：
 > 
 >       1. 基本定时器 
->       2. 通用定时器
->       3. 
+
 
 > **STM32F103 有众多的定时器，其中包括 2 个基本定时器（TIM6 和 TIM7）、4 个通用定时器（TIM2~TIM5）、2 个高级控制定时器（TIM1 和 TIM8），这些定时器彼此完全独立，不共享任何资源。**
 
