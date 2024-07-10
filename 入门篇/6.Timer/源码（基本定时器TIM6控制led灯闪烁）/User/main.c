@@ -35,7 +35,8 @@ int main(void)
     
     while(1)
     {
-        delay_ms(500);
+        delay_ms(1000);
+        LED1_TOGGLE();
     }
 }
 
