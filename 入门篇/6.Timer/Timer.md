@@ -81,3 +81,42 @@ PSC[15:0]是写入预分频器寄存器(TIMx_PSC)的值。
 
 ###### 5. 实验：使用定时器6，实现500ms定时器更新中断，在中断里翻转LED0
 
+**定时器初始化**
+```c
+void btim_timx_int_init(uint16_t arr, uint16_t psc)
+{
+    g_timx_handle.Instance = BTIM_TIMX_INT;                      /* 通用定时器X */
+    g_timx_handle.Init.Prescaler = psc;                          /* 设置预分频系数 */
+    g_timx_handle.Init.CounterMode = TIM_COUNTERMODE_UP;         /* 递增计数模式 */
+    g_timx_handle.Init.Period = arr;                             /* 自动装载值 */
+    HAL_TIM_Base_Init(&g_timx_handle);
+
+    HAL_TIM_Base_Start_IT(&g_timx_handle);    /* 使能定时器x及其更新中断 */
+}
+```
+**Msp初始化**
+```c
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == BTIM_TIMX_INT)
+    {
+        BTIM_TIMX_INT_CLK_ENABLE();                     /* 使能TIM时钟 */
+        HAL_NVIC_SetPriority(BTIM_TIMX_INT_IRQn, 1, 3); /* 抢占1，子优先级3，组2 */
+        HAL_NVIC_EnableIRQ(BTIM_TIMX_INT_IRQn);         /* 开启ITM3中断 */
+    }
+}
+```
+**重写中断服务函数和中断回调函数**
+```c
+void BTIM_TIMX_INT_IRQHandler(void)
+{
+    HAL_TIM_IRQHandler(&g_timx_handle); /* 定时器中断公共处理函数 */
+}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == BTIM_TIMX_INT)
+    {
+        LED1_TOGGLE(); /* LED1反转 */
+    }
+}
+```
