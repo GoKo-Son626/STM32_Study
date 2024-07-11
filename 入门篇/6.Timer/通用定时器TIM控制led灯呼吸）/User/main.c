@@ -28,6 +28,8 @@ int main(void)
         if (ledrpwmval == 0)dir = 1;        /* ledrpwmval递减到0后，方向改为递增 */
 
         /* 修改比较值控制占空比 */
+        //使用 __HAL_TIM_SET_COMPARE 宏，可以快速、有效地修改定时器的比较值，适合实时控制场景。
+        //使用 TIM_OC_InitTypeDef 结构体和相应的配置函数，适合初始化或需要重新配置定时器多个参数的场景。
         __HAL_TIM_SET_COMPARE(&g_tim_handle, TIM_CHANNEL_2, ledrpwmval);
         
     }

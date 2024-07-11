@@ -15,12 +15,14 @@ void timr_tim_init(uint16_t psc, uint16_t arr)
     HAL_TIM_PWM_Init(&g_tim_handle);
     
     tim_oc_init.OCMode = TIM_OCMODE_PWM1;
-    tim_oc_init.Pulse = arr / 2;
-    tim_oc_init.OCPolarity = TIM_OCPOLARITY_LOW;
+    tim_oc_init.Pulse = arr / 2;                    //占空比50%
+    tim_oc_init.OCPolarity = TIM_OCPOLARITY_LOW;    //低电平有效
     
     
     HAL_TIM_PWM_ConfigChannel(&g_tim_handle, &tim_oc_init, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&g_tim_handle, TIM_CHANNEL_2);
+    
+    // 使能通道预装载（可选）
 
 }
 
@@ -37,9 +39,9 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
         gpio_init_struct.Pull = GPIO_PULLUP;                    /* 上拉 */
         gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;          /* 高速 */
         HAL_GPIO_Init(GPIOB, &gpio_init_struct);
-        //应为重映射，
+        
         __HAL_RCC_AFIO_CLK_ENABLE();
-        __HAL_AFIO_REMAP_TIM3_PARTIAL();
+        __HAL_AFIO_REMAP_TIM3_PARTIAL();                    //重映射
     }
 }
 
