@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-07-10
+ * @LastEditTime: 2024-07-11
  * @FilePath: \STM32_Study\入门篇\6.Timer\General_timer.md
  * @Description: 通用定时器的学习和记录
 -->
@@ -126,3 +126,77 @@ TIM2 和 TIM5 的计数器是 32 位的。
 ![产生 PWM模式1 示意图](Pictures/产生PWM模式1示意图.png)
 ![产生 PWM模式2 示意图](Pictures/产生PWM模式2示意图.png)
 
+**PWM输出的配置步骤**
+![PWM输出的配置步骤](Pictures/PWM输出的配置步骤.png)
+
+**编程实战：PWM输出控制LED灯实现呼吸灯**
+
+- 初始化TIM
+```c
+void timr_tim_init(uint16_t psc, uint16_t arr)
+{
+    TIM_OC_InitTypeDef tim_oc_init = {0};
+    
+    g_tim_handle.Instance = TIM3;
+    g_tim_handle.Init.Prescaler = psc;
+    g_tim_handle.Init.Period = arr;
+    g_tim_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
+    HAL_TIM_PWM_Init(&g_tim_handle);
+    
+    tim_oc_init.OCMode = TIM_OCMODE_PWM1;
+    tim_oc_init.Pulse = arr / 2;                    //占空比50%
+    tim_oc_init.OCPolarity = TIM_OCPOLARITY_LOW;    //低电平有效
+    
+    
+    HAL_TIM_PWM_ConfigChannel(&g_tim_handle, &tim_oc_init, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(&g_tim_handle, TIM_CHANNEL_2);
+    
+    // 使能通道预装载（可选）
+
+}
+```
+- Msp配置
+```c
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
+{
+    if(htim->Instance == TIM3)
+    {
+        GPIO_InitTypeDef gpio_init_struct;
+        __HAL_RCC_TIM3_CLK_ENABLE();
+
+        //初始化GPIO
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        gpio_init_struct.Pin = GPIO_PIN_5;
+        gpio_init_struct.Mode = GPIO_MODE_AF_PP;            /* 推挽式复用功能 */
+        gpio_init_struct.Pull = GPIO_PULLUP;                    /* 上拉 */
+        gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;          /* 高速 */
+        HAL_GPIO_Init(GPIOB, &gpio_init_struct);
+        
+        //使能AFIO时钟并重映射
+        __HAL_RCC_AFIO_CLK_ENABLE();
+        __HAL_AFIO_REMAP_TIM3_PARTIAL();
+    }
+}
+```
+- 主函数
+```c
+    uint16_t ledrpwmval = 0;
+    uint8_t dir = 1;
+
+    while(1)
+    {
+        delay_ms(10);
+
+        if (dir)ledrpwmval++;               /* dir==1 ledrpwmval递增 */
+        else ledrpwmval--;                  /* dir==0 ledrpwmval递减 */
+
+        if (ledrpwmval > 300)dir = 0;       /* ledrpwmval到达300后，方向为递减 */
+        if (ledrpwmval == 0)dir = 1;        /* ledrpwmval递减到0后，方向改为递增 */
+
+        /* 修改比较值控制占空比 */
+        //使用 __HAL_TIM_SET_COMPARE 宏，可以快速、有效地修改定时器的比较值，适合实时控制场景。
+        //使用 TIM_OC_InitTypeDef 结构体和相应的配置函数，适合初始化或需要重新配置定时器多个参数的场景。
+        __HAL_TIM_SET_COMPARE(&g_tim_handle, TIM_CHANNEL_2, ledrpwmval);
+        
+    }
+```
