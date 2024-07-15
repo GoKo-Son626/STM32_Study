@@ -74,7 +74,7 @@ void oled_data_out(uint8_t data)
 **ASCII**:基于拉丁字母的一套电脑编码系统，共128个字符：33个控制字符 和 95个显示字符
 
 **95个显示字符如下**：
-  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+(第一个为空格) !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
 
 **ASCII显示字符码表**
 ![ASCII显示字符码表](Pictures/ASCII显示字符码表.png)
