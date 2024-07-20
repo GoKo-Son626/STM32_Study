@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-07-19
+ * @LastEditTime: 2024-07-21
  * @FilePath: \STM32_Study\入门篇\12.RTC\RTC.md
  * @Description: 该模板为所有笔记模板
 -->
@@ -44,7 +44,7 @@
 
 **RTC框图**
 ![RTC框图](Pictures/RTC框图.png)
-
+s
 > 1. RTC预分频系数
 > 2. 32位可编程计数器
 > 3. 待机唤醒
