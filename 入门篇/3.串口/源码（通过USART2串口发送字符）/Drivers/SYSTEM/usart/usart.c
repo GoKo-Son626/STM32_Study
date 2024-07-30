@@ -127,16 +127,33 @@ void USART2_IRQHandler(void)
 /* 重定义中断回调函数 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    // 如果还没有接收成功
-    if((g_usart2_rx_flag & 0x8000) == 0) {
-        // 接收到的是0x0d
-        if(g_rx_buffer[0] == 0x0d) {
-            // 接收成功
-            g_usart2_rx_flag |= 0x8000;
-        } else{
-            g_user_rx_buffer[g_usart2_rx_flag++ & 0x3fff] = g_rx_buffer[0]; // 利用标志位的0到13进行递增计数，使其不超出分为0到16383
-        }
-    } else {
-        // 什么也不做，已经接收成功了
-    }
+	//如果还没有接收成功
+	if(g_usart2_rx_flag & 0x8000 == 0)
+	{
+		//如果接收到0x0d,则表明接收成功
+		if(g_rx_buffer[0] == 0x0d)
+		{
+			g_usart2_rx_flag |= 0x8000;
+		} else
+		{
+			g_user_rx_buffer[g_usart2_rx_flag++ & 0x3fff] = g_rx_buffer[0]; // 利用标志位的0到13进行递增计数，使其不超出分为0到16383
+		}
+	}
+	else
+	{
+		//do nothing
+	}
 }
+//    // 如果还没有接收成功
+//    if((g_usart2_rx_flag & 0x8000) == 0) {
+//        // 接收到的是0x0d
+//        if(g_rx_buffer[0] == 0x0d) {
+//            // 接收成功
+//            g_usart2_rx_flag |= 0x8000;
+//        } else{
+//            g_user_rx_buffer[g_usart2_rx_flag++ & 0x3fff] = g_rx_buffer[0]; // 利用标志位的0到13进行递增计数，使其不超出分为0到16383
+//        }
+//    } else {
+//        // 什么也不做，已经接收成功了
+//    }
+//}

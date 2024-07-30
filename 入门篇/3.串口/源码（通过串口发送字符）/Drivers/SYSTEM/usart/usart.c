@@ -96,12 +96,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         gpio_init_struct.Pin = GPIO_PIN_9;                 
         gpio_init_struct.Mode = GPIO_MODE_AF_PP;            /* 推挽式复用输出 */
         gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;          /* 高速 */
-        HAL_GPIO_Init(GPIOA, &gpio_init_struct);       /* 初始化LED0引脚 */
+        HAL_GPIO_Init(GPIOA, &gpio_init_struct);       /* 初始化引脚 */
 
         gpio_init_struct.Pin = GPIO_PIN_10;                 
         gpio_init_struct.Mode = GPIO_MODE_AF_INPUT;            /* 输入 */
         gpio_init_struct.Pull = GPIO_PULLUP;                    /* 上拉 */
-        HAL_GPIO_Init(GPIOA, &gpio_init_struct);       /* 初始化LED0引脚 */
+        HAL_GPIO_Init(GPIOA, &gpio_init_struct);       /* 初始化引脚 */
         //3.使能USART1中断，设置优先级
         HAL_NVIC_SetPriority(USART1_IRQn, 3, 3);
         HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -113,11 +113,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 void USART1_IRQHandler(void)
 {
     HAL_UART_IRQHandler(&g_uart1_handle);
-    HAL_UART_Receive_IT(&g_uart1_handle, (uint8_t*)g_rx_buffer, 1);
 }
 
 /* 回调函数 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+    HAL_UART_Receive_IT(&g_uart1_handle, (uint8_t*)g_rx_buffer, 1);
      g_usart1_rx_flag = 1;
 }
