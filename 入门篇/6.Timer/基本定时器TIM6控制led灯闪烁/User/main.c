@@ -31,7 +31,7 @@ int main(void)
     sys_stm32_clock_init(RCC_PLL_MUL9);         /* 设置时钟,72M */
     delay_init(72);                             /* 初始化延时函数 */
     led_init();                                 /* 初始化LED */
-    btim_time6_init(7199, 4999);
+    btim_time6_init(7199, 4999);						/* 10Khz的计数频率，计数5K次为500ms，即0.5s */
     
     while(1)
     {
