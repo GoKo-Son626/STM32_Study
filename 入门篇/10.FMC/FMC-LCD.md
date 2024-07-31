@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-07-16
+ * @LastEditTime: 2024-07-31
  * @FilePath: \STM32_Study\入门篇\10.FMC\FMC-LCD.md
  * @Description: 该模板为所有笔记模板
 -->
@@ -10,10 +10,15 @@
 
 > 内容目录：
 > 
->       1. 
->       2. 
->       3. 
+>       1. LCD和MCU屏简介
+>       2. LCD驱动（一般过程）
+>       3. ASCII字库制作
+>       4. 编程实战1
+>       5. FSMC介绍
+>       6. LCD初始化步骤（FSMC）
+>       7. FMC介绍
 
+> #### 常见存储器类型及其说明
 > 在STM32微控制器中，以下是常见的存储器类型及其简要说明：
 > 
 > 1. **SRAM (静态随机访问存储器)**
@@ -57,14 +62,15 @@
 ![LCD驱动（一般过程）](Pictures/LCD驱动（一般过程）.png)
 
 **LCD接口分类**
-| 接口 | 分辨率    | 特性                                               |
-| ---- | --------- | -------------------------------------------------- |
-| MCU  | ≤800*480  | 带SRAM，无需频繁刷新，无需大内存，驱动简单         |
-| RGB  | ≤1280*800 | 不带SRAM，需要实时刷新，需要大内存，驱动稍微复杂   |
-| MIPI | 4K        | 不带SRAM，支持分辨率高，省电，大部分手机屏用此接口 |
+| 接口    | 分辨率       | 特性                                               |
+| ------- | ------------ | -------------------------------------------------- |
+| **MCU** | **≤800*480** | **带SRAM，无需频繁刷新，无需大内存，驱动简单**     |
+| RGB     | ≤1280*800    | 不带SRAM，需要实时刷新，需要大内存，驱动稍微复杂   |
+| MIPI    | 4K           | 不带SRAM，支持分辨率高，省电，大部分手机屏用此接口 |
 
 **8080时序简介**
 - 并口总线时序，常用于MCU屏驱动IC的访问，由Intel提出，也叫英特尔总线
+
 | 信号    | 名称      | 控制状态  | 作用                                   |
 | ------- | --------- | --------- | -------------------------------------- |
 | CS      | 片选      | 低电平    | 选中器件，低电平有效，先选中，后操作   |
@@ -73,23 +79,181 @@
 | RS      | 数据/命令 | 0=命/1=数 | 表示当前是读写数据还是命令，也叫DC信号 |
 | D[15:0] | 数据线    | 无        | 双向数据线，可以写入/读取驱动IC数据    |
 
-### 3. 编程实战1
-
-### 4. ASCII字库制作
+### 3. ASCII字库制作
 > - 使用PCtoLCD2002.exe软件制作
 > 点帧格式：阴码
 > 取模方式：逐列式
 > 取模走向：顺向
 > 自定义格式：C51格式
 
+### 4. 编程实战1
+
+**初始化LCD**
+```c
+/* 初始化LCD */
+void lcd_init(void)
+{
+    GPIO_InitTypeDef gpio_init_struct;
+    
+    LCD_BL_GPIO_CLK_ENABLE();   /* LCD_BL脚时钟使能 */
+    LCD_CS_GPIO_CLK_ENABLE();   /* LCD_CS脚时钟使能 */
+    LCD_WR_GPIO_CLK_ENABLE();   /* LCD_WR脚时钟使能 */
+    LCD_RD_GPIO_CLK_ENABLE();   /* LCD_RD脚时钟使能 */
+    LCD_RS_GPIO_CLK_ENABLE();   /* LCD_RS脚时钟使能 */
+    LCD_DATA_GPIO_CLK_ENABLE(); /* LCD_DATA脚时钟使能 */
+    __HAL_RCC_AFIO_CLK_ENABLE();
+    __HAL_AFIO_REMAP_SWJ_NOJTAG(); /* 禁止JTAG, 使能SWD, 释放PB3,PB4两个引脚做普通IO用 */
+    
+    gpio_init_struct.Pin = LCD_BL_GPIO_PIN;
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP;            /* 推挽复用 */
+    gpio_init_struct.Pull = GPIO_PULLUP;                    /* 上拉 */
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;          /* 高速 */
+    HAL_GPIO_Init(LCD_BL_GPIO_PORT, &gpio_init_struct);     /* LCD_BL引脚模式设置(推挽输出) */
+
+    gpio_init_struct.Pin = LCD_CS_GPIO_PIN;
+    HAL_GPIO_Init(LCD_CS_GPIO_PORT, &gpio_init_struct);     /* 初始化LCD_CS引脚 */
+
+    gpio_init_struct.Pin = LCD_WR_GPIO_PIN;
+    HAL_GPIO_Init(LCD_WR_GPIO_PORT, &gpio_init_struct);     /* 初始化LCD_WR引脚 */
+
+    gpio_init_struct.Pin = LCD_RD_GPIO_PIN;
+    HAL_GPIO_Init(LCD_RD_GPIO_PORT, &gpio_init_struct);     /* 初始化LCD_RD引脚 */
+
+    gpio_init_struct.Pin = LCD_RS_GPIO_PIN;
+    HAL_GPIO_Init(LCD_RS_GPIO_PORT, &gpio_init_struct);     /* 初始化LCD_RS引脚 */
+
+    gpio_init_struct.Pin = LCD_DATA_GPIO_PIN;
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP;            /* 推挽输出 */
+    HAL_GPIO_Init(LCD_DATA_GPIO_PORT, &gpio_init_struct);   /* LCD_DATA引脚模式设置 */
+    
+    LCD_WR(1);                  /* WR 默认高电平 */
+    LCD_RD(1);                  /* RD 默认高电平 */
+    LCD_CS(1);                  /* CS 默认高电平 */
+    LCD_RS(1);                  /* RS 默认高电平 */
+    LCD_DATA_OUT(0XFFFF);       /* DATA 默认高电平 */
+
+    /* 读取ID */
+    lcd_wr_regno(0xD3);
+    lcddev.id = lcd_rd_data();  /* 假读 */
+    lcddev.id = lcd_rd_data();  /* 00 */
+    lcddev.id = lcd_rd_data();  /* 93 */
+    lcddev.id <<= 8;
+    lcddev.id |= lcd_rd_data();  /* 41 */
+    
+    printf("lcddev_id:%#x \r\n", lcddev.id);
+    
+    /* 完成初始化序列 */
+    if (lcddev.id == 0x9341)
+        lcd_ex_ili9341_reginit();
+    else
+        lcd_ex_st7789_reginit();
+    
+    /* 对LCD控制结构体赋值 */
+    lcddev.width = 240;
+    lcddev.height = 320;
+    lcddev.setxcmd = 0x2A;
+    lcddev.setycmd = 0x2B;
+    lcddev.wramcmd = 0x2C;
+    
+    lcd_wr_regno(lcddev.setxcmd);
+    lcd_wr_data(0);
+    lcd_wr_data(0);
+    lcd_wr_data((lcddev.width - 1) >> 8);
+    lcd_wr_data((lcddev.width - 1) & 0XFF);
+    lcd_wr_regno(lcddev.setycmd);
+    lcd_wr_data(0);
+    lcd_wr_data(0);
+    lcd_wr_data((lcddev.height - 1) >> 8);
+    lcd_wr_data((lcddev.height - 1) & 0XFF);
+    
+    /* 设置扫描方向 */
+    lcd_write_reg(0x36, 1 << 3);
+    
+    /* 点亮背光 */
+    LCD_BL(1);
+    
+    /* lcd_clear */
+    lcd_clear(0xFFFF);
+}
+```
+**LCD基本函数**
+```c
+/* 8080 写数据 */
+void lcd_wr_data (uint16_t data)
+{
+    LCD_RS(1);          /* 操作数据 */
+    LCD_CS(0);          /* 选中 */
+    LCD_DATA_OUT(data); /* 数据 */
+    LCD_WR(0);          /* WR低电平 */
+    LCD_WR(1);          /* WR高电平 */
+    LCD_CS(1);          /* 释放片选 */
+}
+
+/* 8080 写命令 */
+void lcd_wr_regno(uint16_t regno)
+{
+    LCD_RS(0);          /* RS=0,表示写寄存器 */
+    LCD_CS(0);          /* 选中 */
+    LCD_DATA_OUT(regno);/* 命令 */
+    LCD_WR(0);          /* WR低电平 */
+    LCD_WR(1);          /* WR高电平 */
+    LCD_CS(1);          /* 释放片选 */
+}
+
+/* 往寄存器写值 */
+void lcd_write_reg(uint16_t regno, uint16_t data)
+{
+    lcd_wr_regno(regno);    /* 写入要写的寄存器序号 */
+    lcd_wr_data(data);      /* 写入数据 */
+}
+
+static void lcd_opt_delay(uint32_t i)
+{
+    while(i--);
+}
+
+/* LCD读数据 */
+uint16_t lcd_rd_data(void)
+{
+    volatile uint16_t ram;  /* 防止被优化 */
+    
+    GPIO_InitTypeDef gpio_init_struct;
+    /* LCD_DATA 引脚模式设置, 上拉输入, 准备接收数据 */
+    gpio_init_struct.Pin = LCD_DATA_GPIO_PIN;
+    gpio_init_struct.Mode = GPIO_MODE_INPUT;
+    gpio_init_struct.Pull = GPIO_PULLUP;
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(LCD_DATA_GPIO_PORT, &gpio_init_struct); 
+
+    LCD_RS(1);              /* RS=1,表示操作数据 */
+    LCD_CS(0);
+    LCD_RD(0);
+    lcd_opt_delay(2);
+    ram = LCD_DATA_IN;      /* 读取数据 */
+    LCD_RD(1);
+    LCD_CS(1);
+     
+    /* LCD_DATA 引脚模式设置, 推挽输出, 恢复输出状态 */
+    gpio_init_struct.Pin = LCD_DATA_GPIO_PIN;
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP;
+    gpio_init_struct.Pull = GPIO_PULLUP;
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(LCD_DATA_GPIO_PORT, &gpio_init_struct);   
+
+    return ram;
+}
+
+```
 
 ### 5. FSMC介绍
 
 ###### 1. FSMC简介
 
-> FSMC，Flexible Static Memory Controller，灵活的静态存储控制器。
-> 用途：用于驱动SRAM，NOR FLASH，NAND FLASH及PC卡类型的存储器。
-> 配置好FSMC，定义一个指向这些地址的指针，通过对指针操作就可以直接修改存储单元的内容，FSMC自动完成读写命令和数据访问操作，不需要程序去实现时序。
+> **FSMC**，Flexible Static Memory Controller，**灵活的静态存储控制器**。
+> **用途**：
+> - 用于驱动SRAM，NOR FLASH，NAND FLASH及PC卡类型的存储器。
+> - 配置好FSMC，定义一个指向这些地址的指针，通过对指针操作就可以直接修改存储单元的内容，FSMC自动完成读写命令和数据访问操作，不需要程序去实现时序。
+> 
 > **F1/F4(407)系列大容量型号，且引脚数目在100脚以上的芯片都有FSMC接口**
 **F4/F7/H7系列就是FMC接口**
 
@@ -107,10 +271,10 @@
 
 | 访问模式  | 对应的外部存储器     | 时序特性                                                        |
 | --------- | -------------------- | --------------------------------------------------------------- |
-| 模式1     | SRAM/CRAM            | OE在读时序片选过程不翻转，有NBL信号，无NADV信号                 |
-| **模式A** | **SRAM/PSRAM(CRAM)** | **OE在读时序片选过程翻转，有NBL信号，无NADV信号**               |
-| 模式B/2   | NOR FLASH            | OE在读时序片选过程不翻转，无NBL信号，有NADV信号                 |
-| 模式C     | NOR FLASH            | OE在读时序片选过程翻转，无NBL信号，有NADV信号                   |
+| 模式1     | `SRAM/CRAM`            | OE在读时序片选过程不翻转，有NBL信号，无NADV信号                 |
+| **模式A** | **`SRAM/PSRAM(CRAM)`** | **OE在读时序片选过程翻转，有NBL信号，无NADV信号**               |
+| 模式B/2   | `NOR FLASH`            | OE在读时序片选过程不翻转，无NBL信号，有NADV信号                 |
+| 模式C     | `NOR FLASH`            | OE在读时序片选过程翻转，无NBL信号，有NADV信号                   |
 | 模式D     | 带地址扩展的异步操作 | OE在读时序片选过程翻转，无NBL信号，有NADV信号，存在地址保存时间 |
 
 - 注意：FSMC时序中ADDSET和DATAST不需要严格要求，可以使用实践值
@@ -180,13 +344,12 @@ typedef struct
 
 ### 6. LCD初始化步骤（FSMC）
 
-1. **lcd_init()**
-> 1.    使能LCD相关GPIO引脚时钟并初始化
-> 2.    配置SRAM句柄的相关参数
-> 3.    分别配置读写时序句柄
-> 4.    使用步骤**2.3**初始化FSMC（后延时50ms）
-> 5.    读取并读回特定寄存器的值以识别LCD控制器的ID
-> 6.    根据控制器ID执行相关初始化
+> 1.    **使能LCD相关GPIO引脚时钟并初始化:** `lcd_init()`
+> 2.    **配置SRAM句柄的相关参数**
+> 3.    **分别配置读写时序句柄**
+> 4.    **使用步骤**2.3**初始化FSMC（后延时50ms）**
+> 5.    **读取并读回特定寄存器的值以识别LCD控制器的ID**
+> 6.    **根据控制器ID执行相关初始化**
 
 ### 7. FMC介绍
 
