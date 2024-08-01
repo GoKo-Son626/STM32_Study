@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-06-06
  * @LastEditors: GoKo-Son626
- * @LastEditTime: 2024-07-17
+ * @LastEditTime: 2024-08-01
  * @FilePath: \STM32_Study\入门篇\11.USMART\USART.md
  * @Description: 该模板为所有笔记模板
 -->
@@ -18,8 +18,8 @@
 
 ### 1. USMART简介
 
-> - USMART是一个串口调试组件，可以大大提高代码调试效率！
-> - USMART可以直接通过串口调用用户编写的函数，随意修改函数参数！
+> - **USMART是一个串口调试组件，可以大大提高代码调试效率！**
+> - **USMART可以直接通过串口调用用户编写的函数，随意修改函数参数！**
 
 ###### 1. USMART主要特点
 1. 可以调用绝大部分用户直接编写的函数
